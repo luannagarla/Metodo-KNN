@@ -1,4 +1,4 @@
-#Projeto 02 - POO: método KNN
+# Projeto 02 - POO: método KNN
 
 **Objetivo:** Implementação em c++ de uma classe que cálcule o KNN 
 
