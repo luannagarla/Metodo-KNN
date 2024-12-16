@@ -1,4 +1,4 @@
-#include "knn.h"
+#include "read_csv.h"
 #include <iostream>
 
 using namespace std;
@@ -8,18 +8,12 @@ void printData(void *newLista, bool isFirstColumnInt, int currentRows, int curre
 
 int main()
 {
-    string file1 = "features-Aula 13 - Projeto 1 - dataset1.csv";
-    string file2 = "features-Aula 13 - Projeto 1 - dataset2.csv";
-    string file3 = "label-Aula 13 - Projeto 1 - dataset1.csv";
-    string file4 = "label-Aula 13 - Projeto 1 - dataset2.csv";
+    string file1 = "dataset-treinamento.csv";
 
     char delimiter = ','; //pode ser alterado
     bool ignoreFirstLine = true; //pode ser alterado
 
     processFile(file1, delimiter, ignoreFirstLine);
-    processFile(file2, delimiter, ignoreFirstLine);
-    processFile(file3, delimiter, ignoreFirstLine);
-    processFile(file4, delimiter, ignoreFirstLine);
 
     return 0;
 }
