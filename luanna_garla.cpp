@@ -9,16 +9,19 @@ void printData(void *newLista, bool isFirstColumnInt, int currentRows, int curre
 
 int main()
 {
-    string fileTraining = "dataset-treinamento.csv";
-    string file = "dataset2-sem-label.csv";
-
     char delimiter = ',';        // pode ser alterado
     bool ignoreFirstLine = true; // pode ser alterado
+    
+    string fileTraining = "dataset-training.csv";
+    string labelTraining = "label-training.csv";
 
-    void *listTraining = processFile(fileTraining, delimiter, ignoreFirstLine);
-    // chamar knn para função de treinamento
+    string fileNoLabel = "dataset-no-label.csv";
 
-    void *listNoLabel = processFile(file, delimiter, ignoreFirstLine);
+    void *listDatasetTraining = processFile(fileTraining, delimiter, ignoreFirstLine);
+    void *listLabelTraining = processFile(filabelTrainingleTraining, delimiter, ignoreFirstLine);
+    // método fit
+
+    void *listDatasetNoLabel = processFile(fileNoLabel, delimiter, ignoreFirstLine);
     //chamar função de predict do knn
 
     return 0;

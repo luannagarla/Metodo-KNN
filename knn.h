@@ -1,105 +1,85 @@
-#include <iostream>
 #include <cmath>
 #include <algorithm>
+#include <map>
+#include <iostream>
 
 using namespace std;
 
+template <typename T>
 class KNN
 {
 private:
     int k;
-    int maxRows, maxCols, trainingRows;
-    float **trainingData;
-    int *trainingLabels;
+    T **train_data;        // treinamento
+    int *train_labels;     // labels treinamento
+    int num_train_samples; // exemplos de treinamento
+    int num_features;      // características por exemplo
+
+    T euclidean_distance(const T *a, const T *b) const
+    {
+        T sum = 0;
+        for (int i = 0; i < num_features; ++i)
+        {
+            sum += (a[i] - b[i]) * (a[i] - b[i]);
+        }
+        return sqrt(sum);
+    }
 
 public:
-    KNN(int k)
-        : k(k)
+    KNN() : k(5), train_data(NULL), train_labels(NULL), num_train_samples(0), num_features(0) {}
+
+    KNN(int k_value) : k(k_value), train_data(NULL), train_labels(NULL), num_train_samples(0), num_features(0) {}
+
+    void fit(T **data, int *labels, int n_samples, int n_features)
     {
+        train_data = data;
+        train_labels = labels;
+        num_train_samples = n_samples;
+        num_features = n_features;
     }
 
-    ~KNN()
+    int *predict(T **test_data, int num_test_samples) const
     {
-    }
+        int *predictions = new int[num_test_samples]; // armazena as previsões
 
-    void fit(float data[][2], int labels[], int rows, int cols)
-    {
-        trainingRows = rows;
-        for (int i = 0; i < rows; ++i)
+        for (int i = 0; i < num_test_samples; ++i)
         {
-            for (int j = 0; j < cols; ++j)
+            T *test_point = test_data[i];
+
+            // Calcula as distâncias do ponto de teste para todos os pontos de treinamento
+            pair<T, int> *distances = new pair<T, int>[num_train_samples];
+            for (int j = 0; j < num_train_samples; ++j)
             {
-                trainingData[i][j] = data[i][j];
+                T dist = euclidean_distance(test_point, train_data[j]);
+                distances[j] = {dist, train_labels[j]};
             }
-            trainingLabels[i] = labels[i];
-        }
-    }
 
-    int predict(float sample[], int cols)
-    {
-        float *distances = new float[trainingRows];
-        int *labelIndices = new int[trainingRows];
+            // ordem crescente
+            sort(distances, distances + num_train_samples);
 
-        // Calcula a distância euclidiana
-        for (int i = 0; i < trainingRows; ++i)
-        {
-            float distance = 0.0;
-            for (int j = 0; j < cols; ++j)
+            // Conta as classes dos k vizinhos mais próximos
+            map<int, int> class_count;
+            for (int j = 0; j < k; ++j)
             {
-                distance += pow(sample[j] - trainingData[i][j], 2);
+                class_count[distances[j].second]++;
             }
-            distances[i] = sqrt(distance);
-            labelIndices[i] = i;
-        }
 
-        // Ordena os índices com base nas distâncias
-        // sort(labelIndices, labelIndices + trainingRows, [&](int a, int b)
-        //           { return distances[a] < distances[b]; });
-
-        // Conta os k vizinhos mais próximos
-        int *labelCounts = new int[maxRows](); // Inicializa com zeros
-        for (int i = 0; i < k; ++i)
-        {
-            labelCounts[trainingLabels[labelIndices[i]]]++;
-        }
-
-        // Determina o rótulo mais frequente
-        int predictedLabel = 0;
-        int maxCount = 0;
-        for (int i = 0; i < maxRows; ++i)
-        {
-            if (labelCounts[i] > maxCount)
+            // Determina a classe com maior frequência
+            int best_class = -1;
+            int max_count = -1;
+            for (const auto &[cls, count] : class_count)
             {
-                maxCount = labelCounts[i];
-                predictedLabel = i;
+                if (count > max_count)
+                {
+                    best_class = cls;
+                    max_count = count;
+                }
             }
+
+            predictions[i] = best_class;
+            delete[] distances; // libera a memória alocada 
         }
 
-        delete[] distances;
-        delete[] labelIndices;
-        delete[] labelCounts;
-
-        return predictedLabel;
+        return predictions;
     }
 };
-
-// int main()
-// {
-//     const int maxRows = 6;
-//     const int maxCols = 2;
-
-//     KNN knn(3, maxRows, maxCols);
-
-//     float trainingData[6][2] = {
-//         {1.0, 2.0}, {2.0, 3.0}, {3.0, 3.0}, {6.0, 5.0}, {7.0, 8.0}, {8.0, 8.0}};
-//     int trainingLabels[6] = {0, 0, 0, 1, 1, 1};
-
-//     knn.train(trainingData, trainingLabels, 6, 2);
-
-//     float sample[2] = {4.0, 4.0};
-//     int prediction = knn.predict(sample, 2);
-
-//     cout << "Classe prevista: " << prediction << endl;
-
-//     return 0;
-// }
