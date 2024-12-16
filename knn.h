@@ -1,85 +1,105 @@
 #include <cmath>
 #include <algorithm>
-#include <map>
 #include <iostream>
 
 using namespace std;
 
-template <typename T>
 class KNN
 {
 private:
     int k;
-    T **train_data;        // treinamento
-    int *train_labels;     // labels treinamento
-    int num_train_samples; // exemplos de treinamento
-    int num_features;      // características por exemplo
-
-    T euclidean_distance(const T *a, const T *b) const
-    {
-        T sum = 0;
-        for (int i = 0; i < num_features; ++i)
-        {
-            sum += (a[i] - b[i]) * (a[i] - b[i]);
-        }
-        return sqrt(sum);
-    }
+    float train_data[100][100];
+    int train_labels[100];
+    int num_lines;
+    int num_cols;
 
 public:
-    KNN() : k(5), train_data(NULL), train_labels(NULL), num_train_samples(0), num_features(0) {}
-
-    KNN(int k_value) : k(k_value), train_data(NULL), train_labels(NULL), num_train_samples(0), num_features(0) {}
-
-    void fit(T **data, int *labels, int n_samples, int n_features)
+    KNN()
     {
-        train_data = data;
-        train_labels = labels;
-        num_train_samples = n_samples;
-        num_features = n_features;
+        k = 5;
+        num_lines = 0;
+        num_cols = 0;
     }
 
-    int *predict(T **test_data, int num_test_samples) const
+    KNN(int k_value)
     {
-        int *predictions = new int[num_test_samples]; // armazena as previsões
+        k = k_value;
+        num_lines = 0;
+        num_cols = 0;
+    }
 
+    void fit(float *data, int labels[], int n_lines, int n_cols)
+    {
+        num_lines = n_lines;
+        num_cols = n_cols;
+
+        for (int i = 0; i < n_lines; ++i)
+        {
+            for (int j = 0; j < n_cols; ++j)
+            {
+                train_data[i][j] = data[i * n_cols + j]; 
+            }
+            train_labels[i] = labels[i];
+        }
+    }
+
+    void predict(float test_data[][10], int num_test_samples, int predictions[])
+    {
         for (int i = 0; i < num_test_samples; ++i)
         {
-            T *test_point = test_data[i];
+            float distances[100]; // Armazena distâncias para cada exemplo de treinamento
+            int labels[100];      // Armazena classes correspondentes
 
-            // Calcula as distâncias do ponto de teste para todos os pontos de treinamento
-            pair<T, int> *distances = new pair<T, int>[num_train_samples];
-            for (int j = 0; j < num_train_samples; ++j)
+            // Calcula a distância do exemplo de teste para cada exemplo de treinamento
+            for (int j = 0; j < num_lines; ++j)
             {
-                T dist = euclidean_distance(test_point, train_data[j]);
-                distances[j] = {dist, train_labels[j]};
+                distances[j] = euclidean_distance(test_data[i], train_data[j]);
+                labels[j] = train_labels[j];
             }
 
-            // ordem crescente
-            sort(distances, distances + num_train_samples);
+            // Ordena as distâncias em ordem crescente (simples Bubble Sort para iniciantes)
+            for (int j = 0; j < num_lines - 1; ++j)
+            {
+                for (int k = j + 1; k < num_lines; ++k)
+                {
+                    if (distances[j] > distances[k])
+                    {
+                        swap(distances[j], distances[k]);
+                        swap(labels[j], labels[k]);
+                    }
+                }
+            }
 
             // Conta as classes dos k vizinhos mais próximos
-            map<int, int> class_count;
+            int class_count[10] = {0}; // Supondo no máximo 10 classes
             for (int j = 0; j < k; ++j)
             {
-                class_count[distances[j].second]++;
+                class_count[labels[j]]++;
             }
 
-            // Determina a classe com maior frequência
-            int best_class = -1;
-            int max_count = -1;
-            for (const auto &[cls, count] : class_count)
+            // Determina a classe mais frequente
+            int best_class = 0;
+            int max_count = 0;
+            for (int j = 0; j < 10; ++j)
             {
-                if (count > max_count)
+                if (class_count[j] > max_count)
                 {
-                    best_class = cls;
-                    max_count = count;
+                    best_class = j;
+                    max_count = class_count[j];
                 }
             }
 
             predictions[i] = best_class;
-            delete[] distances; // libera a memória alocada 
         }
+    }
 
-        return predictions;
+    float euclidean_distance(float *a, float *b)
+    {
+        float sum = 0;
+        for (int i = 0; i < num_cols; ++i)
+        {
+            sum += (a[i] - b[i]) * (a[i] - b[i]);
+        }
+        return sqrt(sum);
     }
 };

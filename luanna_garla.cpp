@@ -4,44 +4,40 @@
 
 using namespace std;
 
-void* processFile(string fileName, char delimiter, bool ignoreFirstLine);
-void printData(void *newLista, bool isFirstColumnInt, int currentRows, int currentCols);
+void Process(string datasetFileName, string labelFileName, char delimiter, bool ignoreFirstLine);
 
 int main()
 {
     char delimiter = ',';        // pode ser alterado
     bool ignoreFirstLine = true; // pode ser alterado
-    
+
     string fileTraining = "dataset-training.csv";
     string labelTraining = "label-training.csv";
-
     string fileNoLabel = "dataset-no-label.csv";
 
-    void *listDatasetTraining = processFile(fileTraining, delimiter, ignoreFirstLine);
-    void *listLabelTraining = processFile(filabelTrainingleTraining, delimiter, ignoreFirstLine);
-    // método fit
-
-    void *listDatasetNoLabel = processFile(fileNoLabel, delimiter, ignoreFirstLine);
-    //chamar função de predict do knn
+    Process(fileTraining, labelTraining, delimiter, ignoreFirstLine);
 
     return 0;
 }
 
-void *processFile(string fileName, char delimiter, bool ignoreFirstLine)
+void Process(string datasetFileName, string labelFileName, char delimiter, bool ignoreFirstLine)
 {
-    CSVReader reader(fileName, delimiter, ignoreFirstLine);
-    cout << "-------------------------------------------------" << endl;
-    cout << "Arquivo lido: " << fileName << endl;
+    CSVReader readerDataset(datasetFileName, delimiter, ignoreFirstLine);
+    CSVReader readerLabel(labelFileName, delimiter, ignoreFirstLine);
 
-    ifstream file(fileName.c_str());
-    if (file.is_open())
+    ifstream fileDataset(datasetFileName.c_str());
+    ifstream fileLabel(labelFileName.c_str());
+
+    if (fileDataset.is_open() && fileLabel.is_open())
     {
-        void *newLista = reader.readData(file);
+        void *listDataset = readerDataset.readData(fileDataset);
+        void *listLabel = readerLabel.readData(fileLabel);
 
-        return newLista;
+        KNN knn(5);
+        knn.fit(&listDataset, listLabel, readerDataset.getCurrentRows, readerDataset.getCurrentCols + 1);
     }
     else
     {
-        cout << "Erro ao abrir o arquivo!" << endl;
+        cout << "Erro ao abrir os arquivos!" << endl;
     }
 }
