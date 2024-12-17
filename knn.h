@@ -46,62 +46,64 @@ public:
         }
     }
 
-    void predict(float *test_data, int num_test_samples, int predictions[])
+    void predict(void *test_data, int num_lines_test)
     {
-        // Para cada exemplo de teste
-        for (int t = 0; t < num_test_samples; ++t)
+        int predictions[num_lines_test];
+        float *testDataset = static_cast<float *>(test_data);
+
+        for (int t = 0; t < num_lines_test; ++t)
         {
-            float test_point[10]; // Para armazenar os dados de uma amostra de teste
+            float test_point[10]; 
+
             for (int i = 0; i < num_cols; ++i)
             {
-                test_point[i] = test_data[t * num_cols + i]; // Acessa os dados de teste como 1D
+                test_point[i] = testDataset[t * num_cols + i]; 
             }
 
-            // Calcular a distância entre o ponto de teste e todos os pontos de treinamento
-            float distances[100];
+            float distances[100]; // Armazena as distâncias entre o ponto de teste e o treinamento
             for (int i = 0; i < num_lines; ++i)
             {
-                float sum = 0;
+                float sum = 0.0;
                 for (int j = 0; j < num_cols; ++j)
                 {
-                    sum += (train_data[i][j] - test_point[j]) * (train_data[i][j] - test_point[j]);
+                    float diff = train_data[i][j] - test_point[j];
+                    sum += diff * diff; // Soma dos quadrados das diferenças
                 }
-                distances[i] = sqrt(sum); // Distância euclidiana
+                distances[i] = sqrt(sum); // Calcula a distância euclidiana
             }
 
-            // Encontrar os k vizinhos mais próximos
+            // Ordenar os índices dos exemplos de treinamento pelo valor da distância
             int indices[100];
             for (int i = 0; i < num_lines; ++i)
             {
                 indices[i] = i;
             }
 
-            // Ordenar os índices com base nas distâncias
             for (int i = 0; i < num_lines - 1; ++i)
             {
                 for (int j = i + 1; j < num_lines; ++j)
                 {
                     if (distances[indices[i]] > distances[indices[j]])
                     {
-                        std::swap(indices[i], indices[j]);
+                        std::swap(indices[i], indices[j]); // Ordenação simples
                     }
                 }
             }
 
-            // Contar as classes dos k vizinhos mais próximos
-            int votes[100] = {0}; // Contagem das classes
+            // Contar os votos das classes dos k vizinhos mais próximos
+            int votes[100] = {0}; // Vetor para contagem de votos por classe
             for (int i = 0; i < k; ++i)
             {
-                int neighbor_index = indices[i];
-                int label = train_labels[neighbor_index];
+                int neighbor_index = indices[i];          // Índice do vizinho mais próximo
+                int label = train_labels[neighbor_index]; // Classe do vizinho
                 votes[label]++;
             }
 
-            // Determinar a classe com mais votos
+            // Determinar a classe com o maior número de votos
             int max_votes = -1;
             int predicted_class = -1;
             for (int i = 0; i < 100; ++i)
-            {
+            { // Percorre os votos possíveis
                 if (votes[i] > max_votes)
                 {
                     max_votes = votes[i];
@@ -109,17 +111,7 @@ public:
                 }
             }
 
-            predictions[t] = predicted_class; // Atribui a classe prevista ao exemplo de teste
+            predictions[t] = predicted_class; // Armazena a classe prevista
         }
-    }
-
-    float euclidean_distance(float *a, float *b)
-    {
-        float sum = 0;
-        for (int i = 0; i < num_cols; ++i)
-        {
-            sum += (a[i] - b[i]) * (a[i] - b[i]);
-        }
-        return sqrt(sum);
     }
 };
