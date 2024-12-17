@@ -32,9 +32,11 @@ public:
         num_lines = n_lines;
         num_cols = n_cols;
 
+        // Conversão dos ponteiros para os tipos corretos
         float *dataset = static_cast<float *>(data);
         int *labelset = static_cast<int *>(labels);
 
+        // Copiando os dados para a matriz interna do KNN
         for (int i = 0; i < n_lines; ++i)
         {
             for (int j = 0; j < n_cols; ++j)
@@ -54,17 +56,20 @@ public:
         }
 
         int *predictions = new int[num_lines_test];
+        // Conversão para o tipo correto
         float *testDataset = static_cast<float *>(test_data);
 
         for (int t = 0; t < num_lines_test; ++t)
         {
             float test_point[MAX_COLS];
 
+            // Copiando o ponto de teste para o vetor local
             for (int i = 0; i < num_cols; ++i)
             {
                 test_point[i] = testDataset[t * num_cols + i];
             }
 
+            // Calculando as distâncias entre o ponto de teste e os dados de treinamento
             float distances[MAX_LINES];
             for (int i = 0; i < num_lines; ++i)
             {
@@ -77,6 +82,7 @@ public:
                 distances[i] = sqrt(sum);
             }
 
+            // Ordenando as distâncias e escolhendo os k vizinhos mais próximos
             int indices[MAX_LINES];
             for (int i = 0; i < num_lines; ++i)
             {
@@ -94,6 +100,7 @@ public:
                 }
             }
 
+            // Votação para determinar a classe do ponto de teste
             int votes[MAX_LINES] = {0};
             for (int i = 0; i < k; ++i)
             {
@@ -102,17 +109,19 @@ public:
                 votes[label]++;
             }
 
-            int max_votes = -1;
+            // Determinando a classe com maior número de votos
             int predicted_class = -1;
+            int max_votes = -1;
             for (int i = 0; i < MAX_LINES; ++i)
             {
                 if (votes[i] > max_votes)
                 {
                     max_votes = votes[i];
-                    predicted_class = i;
+                    predicted_class = i; // A classe mais votada
                 }
             }
 
+            // Atribuindo a classe prevista ao array de previsões
             predictions[t] = predicted_class;
         }
 

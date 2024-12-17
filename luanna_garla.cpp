@@ -1,6 +1,7 @@
-#include "read_csv.h"
 #include "knn.h"
+#include "read_csv.h"
 #include <iostream>
+#include <fstream>
 
 using namespace std;
 
@@ -32,11 +33,16 @@ void Process(string datasetFileName, string labelFileName, string DatasetNoLabel
 
     if (fileDataset.is_open() && fileLabel.is_open() && fileDatasetNoLabel.is_open())
     {
-        void *listDataset = readerDataset.readData(fileDataset);            
-        void *listLabel = readerLabel.readData(fileLabel);                  
-        void *listTest = readerDatasetNoLabel.readData(fileDatasetNoLabel); 
+        void *dataset = readerDataset.readData(fileDataset);            
+        void *label = readerLabel.readData(fileLabel);                  
+        void *test = readerDatasetNoLabel.readData(fileDatasetNoLabel); 
+
+        float **listDataset = static_cast<float **>(dataset);
+        int **listLabel = static_cast<int **>(label);
+        float **listTest = static_cast<float **>(test);
 
         KNN knn(5);
+
         knn.fit(listDataset, listLabel, readerDataset.getCurrentRows(), readerDataset.getCurrentCols());
 
         int num_lines_test = readerDatasetNoLabel.getCurrentRows();
@@ -44,7 +50,7 @@ void Process(string datasetFileName, string labelFileName, string DatasetNoLabel
 
         for (int i = 0; i < num_lines_test; ++i)
         {
-            cout << "Classe " << predictions[i] << endl;
+            cout << "Classe prevista para o ponto de teste " << i << ": " << predictions[i] << endl;
         }
 
         delete[] predictions; 
