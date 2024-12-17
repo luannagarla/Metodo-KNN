@@ -2,34 +2,33 @@
 #include <algorithm>
 #include <iostream>
 
+#define MAX_LINES 100
+#define MAX_COLS 100
+
 using namespace std;
 
 class KNN
 {
 private:
     int k;
-    float train_data[100][100];
-    int train_labels[100];
+    float train_data[MAX_LINES][MAX_COLS];
+    int train_labels[MAX_LINES];
     int num_lines;
     int num_cols;
 
 public:
-    KNN()
-    {
-        k = 5;
-        num_lines = 0;
-        num_cols = 0;
-    }
+    KNN() : k(5), num_lines(0), num_cols(0) {}
 
-    KNN(int k_value)
-    {
-        k = k_value;
-        num_lines = 0;
-        num_cols = 0;
-    }
+    KNN(int k_value) : k(k_value), num_lines(0), num_cols(0) {}
 
     void fit(void *data, void *labels, int n_lines, int n_cols)
     {
+        if (!data || !labels)
+        {
+            cerr << "Erro: Dados de treinamento ou rótulos inválidos!" << endl;
+            return;
+        }
+
         num_lines = n_lines;
         num_cols = n_cols;
 
@@ -48,62 +47,66 @@ public:
 
     int *predict(void *test_data, int num_lines_test)
     {
+        if (!test_data)
+        {
+            cerr << "Erro: Dados de teste inválidos!" << endl;
+            return NULL;
+        }
+
         int *predictions = new int[num_lines_test];
         float *testDataset = static_cast<float *>(test_data);
 
         for (int t = 0; t < num_lines_test; ++t)
         {
-            float test_point[10];
+            float test_point[MAX_COLS];
 
             for (int i = 0; i < num_cols; ++i)
             {
                 test_point[i] = testDataset[t * num_cols + i];
             }
 
-            float distances[100]; // Armazena as distâncias entre o ponto de teste e o treinamento
+            float distances[MAX_LINES];
             for (int i = 0; i < num_lines; ++i)
             {
                 float sum = 0.0;
                 for (int j = 0; j < num_cols; ++j)
                 {
                     float diff = train_data[i][j] - test_point[j];
-                    sum += diff * diff; // Soma dos quadrados das diferenças
+                    sum += diff * diff;
                 }
-                distances[i] = sqrt(sum); // Calcula a distância euclidiana
+                distances[i] = sqrt(sum);
             }
 
-            // Ordenar os índices dos exemplos de treinamento pelo valor da distância
-            int indices[100];
+            int indices[MAX_LINES];
             for (int i = 0; i < num_lines; ++i)
             {
                 indices[i] = i;
             }
 
+            // Ordenação por seleção (pode ser otimizado)
             for (int i = 0; i < num_lines - 1; ++i)
             {
                 for (int j = i + 1; j < num_lines; ++j)
                 {
                     if (distances[indices[i]] > distances[indices[j]])
                     {
-                        std::swap(indices[i], indices[j]); // Ordenação simples
+                        swap(indices[i], indices[j]);
                     }
                 }
             }
 
-            // Contar os votos das classes dos k vizinhos mais próximos
-            int votes[100] = {0}; // Vetor para contagem de votos por classe
+            int votes[MAX_LINES] = {0};
             for (int i = 0; i < k; ++i)
             {
-                int neighbor_index = indices[i];          // Índice do vizinho mais próximo
-                int label = train_labels[neighbor_index]; // Classe do vizinho
+                int neighbor_index = indices[i];
+                int label = train_labels[neighbor_index];
                 votes[label]++;
             }
 
-            // Determinar a classe com o maior número de votos
             int max_votes = -1;
             int predicted_class = -1;
-            for (int i = 0; i < 100; ++i)
-            { // Percorre os votos possíveis
+            for (int i = 0; i < MAX_LINES; ++i)
+            {
                 if (votes[i] > max_votes)
                 {
                     max_votes = votes[i];
@@ -111,7 +114,7 @@ public:
                 }
             }
 
-            predictions[t] = predicted_class; // Armazena a classe prevista
+            predictions[t] = predicted_class;
         }
 
         return predictions;

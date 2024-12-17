@@ -3,8 +3,7 @@
 #include <iostream>
 
 using namespace std;
-
-void Process(string datasetFileName, string labelFileName, char delimiter, bool ignoreFirstLine);
+void Process(string datasetFileName, string labelFileName, string DatasetNoLabelFileName, char delimiter, bool ignoreFirstLine);
 
 int main()
 {
@@ -15,7 +14,7 @@ int main()
     string labelTraining = "label-training.csv";
     string fileNoLabel = "dataset-no-label.csv";
 
-    Process(fileTraining, labelTraining, delimiter, ignoreFirstLine);
+    Process(fileTraining, labelTraining, fileNoLabel, delimiter, ignoreFirstLine);
 
     return 0;
 }
