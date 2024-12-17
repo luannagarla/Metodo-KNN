@@ -39,7 +39,16 @@ void Process(string datasetFileName, string labelFileName, string DatasetNoLabel
         KNN knn(3);
         knn.fit(listDataset, listLabel, readerDataset.getCurrentRows(), readerDataset.getCurrentCols() + 1);
 
-        knn.predict(listTest, readerDatasetNoLabel.getCurrentRows());
+        int num_lines_teste = readerDatasetNoLabel.getCurrentRows();
+        int *predictions = knn.predict(listTest, num_lines_teste);
+        
+        cout << "Classes previstas para as amostras de teste:" << std::endl;
+        for (int i = 0; i < num_lines_teste; ++i)
+        {
+            std::cout << "Amostra " << i + 1 << ": Classe " << predictions[i] << std::endl;
+        }
+
+        delete[] predictions; //desalocação
     }
     else
     {

@@ -40,24 +40,24 @@ public:
         {
             for (int j = 0; j < n_cols; ++j)
             {
-                train_data[i][j] = dataset[i * n_cols + j]; 
+                train_data[i][j] = dataset[i * n_cols + j];
             }
-            train_labels[i] = labelset[i]; 
+            train_labels[i] = labelset[i];
         }
     }
 
-    void predict(void *test_data, int num_lines_test)
+    int *predict(void *test_data, int num_lines_test)
     {
-        int predictions[num_lines_test];
+        int *predictions = new int[num_lines_test];
         float *testDataset = static_cast<float *>(test_data);
 
         for (int t = 0; t < num_lines_test; ++t)
         {
-            float test_point[10]; 
+            float test_point[10];
 
             for (int i = 0; i < num_cols; ++i)
             {
-                test_point[i] = testDataset[t * num_cols + i]; 
+                test_point[i] = testDataset[t * num_cols + i];
             }
 
             float distances[100]; // Armazena as distâncias entre o ponto de teste e o treinamento
@@ -113,5 +113,7 @@ public:
 
             predictions[t] = predicted_class; // Armazena a classe prevista
         }
+
+        return predictions;
     }
 };
