@@ -2,8 +2,8 @@
 #include <algorithm>
 #include <iostream>
 
-#define MAX_LINES 100
-#define MAX_COLS 100
+#define MAX_LINES 50
+#define MAX_COLS 50
 
 using namespace std;
 
@@ -83,7 +83,6 @@ public:
                 indices[i] = i;
             }
 
-            // Ordenação por seleção (pode ser otimizado)
             for (int i = 0; i < num_lines - 1; ++i)
             {
                 for (int j = i + 1; j < num_lines; ++j)

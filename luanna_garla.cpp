@@ -3,12 +3,13 @@
 #include <iostream>
 
 using namespace std;
+
 void Process(string datasetFileName, string labelFileName, string DatasetNoLabelFileName, char delimiter, bool ignoreFirstLine);
 
 int main()
 {
-    char delimiter = ',';        // pode ser alterado
-    bool ignoreFirstLine = true; // pode ser alterado
+    char delimiter = ',';
+    bool ignoreFirstLine = true;
 
     string fileTraining = "dataset-training.csv";
     string labelTraining = "label-training.csv";
@@ -31,23 +32,22 @@ void Process(string datasetFileName, string labelFileName, string DatasetNoLabel
 
     if (fileDataset.is_open() && fileLabel.is_open() && fileDatasetNoLabel.is_open())
     {
-        void *listDataset = readerDataset.readData(fileDataset);
-        void *listLabel = readerLabel.readData(fileLabel);
-        void *listTest = readerDatasetNoLabel.readData(fileDatasetNoLabel);
+        void *listDataset = readerDataset.readData(fileDataset);            
+        void *listLabel = readerLabel.readData(fileLabel);                  
+        void *listTest = readerDatasetNoLabel.readData(fileDatasetNoLabel); 
 
-        KNN knn(3);
-        knn.fit(listDataset, listLabel, readerDataset.getCurrentRows(), readerDataset.getCurrentCols() + 1);
+        KNN knn(5);
+        knn.fit(listDataset, listLabel, readerDataset.getCurrentRows(), readerDataset.getCurrentCols());
 
-        int num_lines_teste = readerDatasetNoLabel.getCurrentRows();
-        int *predictions = knn.predict(listTest, num_lines_teste);
-        
-        cout << "Classes previstas para as amostras de teste:" << std::endl;
-        for (int i = 0; i < num_lines_teste; ++i)
+        int num_lines_test = readerDatasetNoLabel.getCurrentRows();
+        int *predictions = knn.predict(listTest, num_lines_test);
+
+        for (int i = 0; i < num_lines_test; ++i)
         {
-            std::cout << "Amostra " << i + 1 << ": Classe " << predictions[i] << std::endl;
+            cout << "Classe " << predictions[i] << endl;
         }
 
-        delete[] predictions; //desalocação
+        delete[] predictions; 
     }
     else
     {
