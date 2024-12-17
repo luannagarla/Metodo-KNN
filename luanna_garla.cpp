@@ -33,8 +33,8 @@ void Process(string datasetFileName, string labelFileName, char delimiter, bool 
         void *listDataset = readerDataset.readData(fileDataset);
         void *listLabel = readerLabel.readData(fileLabel);
 
-        KNN knn(5);
-        knn.fit(&listDataset, listLabel, readerDataset.getCurrentRows, readerDataset.getCurrentCols + 1);
+        KNN knn(3);
+        knn.fit(listDataset, listLabel, readerDataset.getCurrentRows(), readerDataset.getCurrentCols() + 1);
     }
     else
     {

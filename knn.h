@@ -28,22 +28,25 @@ public:
         num_cols = 0;
     }
 
-    void fit(float *data, int labels[], int n_lines, int n_cols)
+    void fit(void *data, void *labels, int n_lines, int n_cols)
     {
         num_lines = n_lines;
         num_cols = n_cols;
+
+        float *dataset = static_cast<float *>(data);
+        int *labelset = static_cast<int *>(labels);
 
         for (int i = 0; i < n_lines; ++i)
         {
             for (int j = 0; j < n_cols; ++j)
             {
-                train_data[i][j] = data[i * n_cols + j];
+                train_data[i][j] = dataset[i * n_cols + j]; 
             }
-            train_labels[i] = labels[i];
+            train_labels[i] = labelset[i]; 
         }
     }
 
-    predict(float *test_data, int num_test_samples, int predictions[])
+    void predict(float *test_data, int num_test_samples, int predictions[])
     {
         // Para cada exemplo de teste
         for (int t = 0; t < num_test_samples; ++t)
@@ -108,14 +111,15 @@ public:
 
             predictions[t] = predicted_class; // Atribui a classe prevista ao exemplo de teste
         }
+    }
 
-        float euclidean_distance(float *a, float *b)
+    float euclidean_distance(float *a, float *b)
+    {
+        float sum = 0;
+        for (int i = 0; i < num_cols; ++i)
         {
-            float sum = 0;
-            for (int i = 0; i < num_cols; ++i)
-            {
-                sum += (a[i] - b[i]) * (a[i] - b[i]);
-            }
-            return sqrt(sum);
+            sum += (a[i] - b[i]) * (a[i] - b[i]);
         }
-    };
+        return sqrt(sum);
+    }
+};
