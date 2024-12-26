@@ -82,6 +82,7 @@ public:
                 test_point[i] = test_data[t][i];
             }
 
+            //calculo distancia euclidiana
             float distances[MAX_LINES];
             for (int i = 0; i < num_lines; ++i)
             {
@@ -111,6 +112,7 @@ public:
                 }
             }
 
+            //desempate
             int votes[MAX_LINES] = {0};
             for (int i = 0; i < k; ++i)
             {
@@ -130,6 +132,7 @@ public:
                 }
             }
 
+            //predição salva
             predictions[t] = predicted_class;
         }
 
