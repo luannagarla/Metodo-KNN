@@ -11,8 +11,8 @@ class KNN
 {
 private:
     int k;
-    float train_data[MAX_LINES][MAX_COLS];
-    int train_labels[MAX_LINES];
+    float train_data[MAX_LINES][MAX_COLS]; // Dados de treinamento (matriz bidimensional)
+    int train_labels[MAX_LINES];           // Rótulos de treinamento (vetor unidimensional)
     int num_lines;
     int num_cols;
 
@@ -21,7 +21,7 @@ public:
 
     KNN(int k_value) : k(k_value), num_lines(0), num_cols(0) {}
 
-    void fit(float *data, int *labels, int n_lines, int n_cols)
+    void fit(float **data, int *labels, int n_lines, int n_cols)
     {
         if (!data || !labels)
         {
@@ -31,11 +31,20 @@ public:
 
         num_lines = n_lines;
         num_cols = n_cols;
-     
+
+        for (int i = 0; i < num_lines; ++i)
+        {
+            for (int j = 0; j < num_cols; ++j)
+            {
+                train_data[i][j] = data[i][j];
+            }
+            train_labels[i] = labels[i]; 
+        }
+
         cout << "Dados carregados com sucesso no método fit!" << endl;
     }
 
-    int *predict(void *test_data, int num_lines_test)
+    int *predict(float **test_data, int num_lines_test)
     {
         if (!test_data)
         {
@@ -44,7 +53,6 @@ public:
         }
 
         int *predictions = new int[num_lines_test];
-        float *testDataset = static_cast<float *>(test_data);
 
         for (int t = 0; t < num_lines_test; ++t)
         {
@@ -53,7 +61,7 @@ public:
             // Copiando o ponto de teste para o vetor local
             for (int i = 0; i < num_cols; ++i)
             {
-                test_point[i] = testDataset[t * num_cols + i];
+                test_point[i] = test_data[t][i];
             }
 
             float distances[MAX_LINES];
@@ -84,8 +92,8 @@ public:
                     }
                 }
             }
-            
-            //desempate
+
+            // Desempate baseado nos votos dos vizinhos
             int votes[MAX_LINES] = {0};
             for (int i = 0; i < k; ++i)
             {
