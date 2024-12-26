@@ -33,27 +33,59 @@ void Process(string datasetFileName, string labelFileName, string DatasetNoLabel
 
     if (fileDataset.is_open() && fileLabel.is_open() && fileDatasetNoLabel.is_open())
     {
-        void *dataset = readerDataset.readData(fileDataset);            
-        void *label = readerLabel.readData(fileLabel);                  
-        void *test = readerDatasetNoLabel.readData(fileDatasetNoLabel); 
+        cout << "Arquivos lidos com sucesso!" << endl;
+
+        void *dataset = readerDataset.readData(fileDataset);
+        void *label = readerLabel.readData(fileLabel);
+        void *test = readerDatasetNoLabel.readData(fileDatasetNoLabel);
 
         float **listDataset = static_cast<float **>(dataset);
         int **listLabel = static_cast<int **>(label);
         float **listTest = static_cast<float **>(test);
 
-        KNN knn(5);
+        int rows = readerDataset.getCurrentRows();
+        int cols = readerDataset.getCurrentCols();
 
-        knn.fit(listDataset, listLabel, readerDataset.getCurrentRows(), readerDataset.getCurrentCols());
-
-        int num_lines_test = readerDatasetNoLabel.getCurrentRows();
-        int *predictions = knn.predict(listTest, num_lines_test);
-
-        for (int i = 0; i < num_lines_test; ++i)
+        float *linearizedDataset = new float[rows * cols];
+        int *linearizedLabels = new int[rows];
+        for (int i = 0; i < rows; ++i)
         {
-            cout << "Classe prevista para o ponto de teste " << i << ": " << predictions[i] << endl;
+            for (int j = 0; j < cols; ++j)
+            {
+                linearizedDataset[i * cols + j] = listDataset[i][j];
+            }
+            linearizedLabels[i] = listLabel[i][0];
         }
 
-        delete[] predictions; 
+        KNN knn(5);
+
+        knn.fit(linearizedDataset, linearizedLabels, rows, cols);
+
+        int num_lines_test = readerDatasetNoLabel.getCurrentRows();
+        int num_cols_test = readerDatasetNoLabel.getCurrentCols();
+
+        float *linearizedTest = new float[num_lines_test * num_cols_test];
+        for (int i = 0; i < num_lines_test; ++i)
+        {
+            for (int j = 0; j < num_cols_test; ++j)
+            {
+                linearizedTest[i * num_cols_test + j] = listTest[i][j];
+            }
+        }
+
+        // int *predictions = knn.predict(linearizedTest, num_lines_test);
+
+        // for (int i = 0; i < num_lines_test; ++i)
+        // {
+        //     cout << "Classe prevista para o ponto de teste " << i << ": " << predictions[i] << endl;
+        // }
+
+        cout << "KNN finalizado!" << endl;
+        // Liberar memória
+        delete[] linearizedDataset;
+        delete[] linearizedLabels;
+        delete[] linearizedTest;
+        // delete[] predictions;
     }
     else
     {

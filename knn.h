@@ -21,7 +21,7 @@ public:
 
     KNN(int k_value) : k(k_value), num_lines(0), num_cols(0) {}
 
-    void fit(void *data, void *labels, int n_lines, int n_cols)
+    void fit(float *data, int *labels, int n_lines, int n_cols)
     {
         if (!data || !labels)
         {
@@ -32,18 +32,14 @@ public:
         num_lines = n_lines;
         num_cols = n_cols;
 
-        // Conversão dos ponteiros para os tipos corretos
-        float *dataset = static_cast<float *>(data);
-        int *labelset = static_cast<int *>(labels);
-
-        // Copiando os dados para a matriz interna do KNN
+        // Copiar os dados para a matriz interna do KNN
         for (int i = 0; i < n_lines; ++i)
         {
             for (int j = 0; j < n_cols; ++j)
             {
-                train_data[i][j] = dataset[i * n_cols + j];
+                train_data[i][j] = data[i * n_cols + j];
             }
-            train_labels[i] = labelset[i];
+            train_labels[i] = labels[i];
         }
     }
 
