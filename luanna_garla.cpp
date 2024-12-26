@@ -39,7 +39,7 @@ void Process(string datasetFileName, string labelFileName, string DatasetNoLabel
         void *label = readerLabel.readData(fileLabel);
         void *test = readerDatasetNoLabel.readData(fileDatasetNoLabel);
 
-        float **listDataset = static_cast<float **>(dataset);
+        float **listDataset = reinterpret_cast<float **>(dataset);
         int **listLabel = static_cast<int **>(label);
         float **listTest = static_cast<float **>(test);
 
@@ -51,7 +51,8 @@ void Process(string datasetFileName, string labelFileName, string DatasetNoLabel
         {
             for (int j = 0; j < cols; ++j)
             {
-                linearizedDataset[i * cols + j] = listDataset[i][j];
+                float value = *(*(listDataset + i) + j);
+                linearizedDataset[i * cols + j] = value;
             }
         }
 
@@ -73,21 +74,22 @@ void Process(string datasetFileName, string labelFileName, string DatasetNoLabel
             for (int j = 0; j < num_cols_test; ++j)
             {
                 linearizedTest[i * num_cols_test + j] = listTest[i][j];
+                cout << "Dados a ser testado[" << (i * num_cols_test + j) << "] = "
+                     << linearizedTest[i * num_cols_test + j] << endl;
             }
         }
 
-        // int *predictions = knn.predict(linearizedTest, num_lines_test);
+        cout << "---------------RESULTADO:-----------------" << endl;
 
-        // for (int i = 0; i < num_lines_test; ++i)
-        // {
-        //     cout << "Classe prevista para o ponto de teste " << i << ": " << predictions[i] << endl;
-        // }
+        int *predictions = knn.predict(linearizedTest, num_lines_test);
 
-        cout << "KNN finalizado!" << endl;
-        delete[] linearizedDataset;
-        delete[] linearizedLabels;
+        for (int i = 0; i < num_lines_test; ++i)
+        {
+            cout << "Classe prevista para o ponto de teste " << i << ": " << predictions[i] << endl;
+        }
+
         delete[] linearizedTest;
-        // delete[] predictions;
+        delete[] predictions;
     }
     else
     {

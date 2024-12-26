@@ -25,22 +25,14 @@ public:
     {
         if (!data || !labels)
         {
-            cerr << "Erro: Dados de treinamento ou rótulos inválidos!" << endl;
+            cout << "Erro: Dados de treinamento ou rótulos inválidos!" << endl;
             return;
         }
 
         num_lines = n_lines;
         num_cols = n_cols;
-
-        // Copiar os dados do array linearizado para a matriz interna
-        for (int i = 0; i < n_lines; ++i)
-        {
-            for (int j = 0; j < n_cols; ++j)
-            {
-                train_data[i][j] = data[i * n_cols + j];
-            }
-            train_labels[i] = labels[i];
-        }
+     
+        cout << "Dados carregados com sucesso no método fit!" << endl;
     }
 
     int *predict(void *test_data, int num_lines_test)
@@ -52,7 +44,6 @@ public:
         }
 
         int *predictions = new int[num_lines_test];
-        // Conversão para o tipo correto
         float *testDataset = static_cast<float *>(test_data);
 
         for (int t = 0; t < num_lines_test; ++t)
@@ -65,7 +56,6 @@ public:
                 test_point[i] = testDataset[t * num_cols + i];
             }
 
-            // Calculando as distâncias entre o ponto de teste e os dados de treinamento
             float distances[MAX_LINES];
             for (int i = 0; i < num_lines; ++i)
             {
@@ -78,7 +68,6 @@ public:
                 distances[i] = sqrt(sum);
             }
 
-            // Ordenando as distâncias e escolhendo os k vizinhos mais próximos
             int indices[MAX_LINES];
             for (int i = 0; i < num_lines; ++i)
             {
@@ -95,8 +84,8 @@ public:
                     }
                 }
             }
-
-            // Votação para determinar a classe do ponto de teste
+            
+            //desempate
             int votes[MAX_LINES] = {0};
             for (int i = 0; i < k; ++i)
             {
@@ -105,7 +94,6 @@ public:
                 votes[label]++;
             }
 
-            // Determinando a classe com maior número de votos
             int predicted_class = -1;
             int max_votes = -1;
             for (int i = 0; i < MAX_LINES; ++i)
@@ -113,11 +101,10 @@ public:
                 if (votes[i] > max_votes)
                 {
                     max_votes = votes[i];
-                    predicted_class = i; // A classe mais votada
+                    predicted_class = i;
                 }
             }
 
-            // Atribuindo a classe prevista ao array de previsões
             predictions[t] = predicted_class;
         }
 
