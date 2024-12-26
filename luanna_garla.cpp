@@ -67,7 +67,7 @@ void Process(string datasetFileName, string labelFileName, string DatasetNoLabel
         }
 
         // Chamada do KNN
-        KNN knn(5);
+        KNN knn(1); //alterar o K trás resultados bem diferentes
         knn.fit(convertedDataSet, convertedLabels, rows, cols);
 
         int num_lines_test = readerDatasetNoLabel.getCurrentRows();

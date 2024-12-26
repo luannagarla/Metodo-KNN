@@ -95,6 +95,8 @@ public:
                 distances[i] = sqrt(sum);
             }
 
+
+            //ordenação para aplicar método de desempate
             int indices[MAX_LINES];
             for (int i = 0; i < num_lines; ++i)
             {
@@ -112,7 +114,7 @@ public:
                 }
             }
 
-            //desempate
+            //desempate por maioria ou pega a primeira ocorrência
             int votes[MAX_LINES] = {0};
             for (int i = 0; i < k; ++i)
             {
