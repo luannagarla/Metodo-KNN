@@ -32,16 +32,36 @@ public:
         num_lines = n_lines;
         num_cols = n_cols;
 
+        // Copiando os dados e os rótulos para as variáveis internas
         for (int i = 0; i < num_lines; ++i)
         {
             for (int j = 0; j < num_cols; ++j)
             {
                 train_data[i][j] = data[i][j];
             }
-            train_labels[i] = labels[i]; 
+            train_labels[i] = labels[i];
         }
 
         cout << "Dados carregados com sucesso no método fit!" << endl;
+
+        // Printando os dados de treinamento (train_data)
+        cout << "Dados de Treinamento (train_data):" << endl;
+        for (int i = 0; i < num_lines; ++i)
+        {
+            for (int j = 0; j < num_cols; ++j)
+            {
+                cout << train_data[i][j] << " ";
+            }
+            cout << endl;
+        }
+
+        // Printando os rótulos de treinamento (train_labels)
+        cout << "Rótulos de Treinamento (train_labels):" << endl;
+        for (int i = 0; i < num_lines; ++i)
+        {
+            cout << train_labels[i] << " ";
+        }
+        cout << endl;
     }
 
     int *predict(float **test_data, int num_lines_test)
