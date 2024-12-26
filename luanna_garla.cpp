@@ -47,18 +47,21 @@ void Process(string datasetFileName, string labelFileName, string DatasetNoLabel
         int cols = readerDataset.getCurrentCols();
 
         float *linearizedDataset = new float[rows * cols];
-        int *linearizedLabels = new int[rows];
         for (int i = 0; i < rows; ++i)
         {
             for (int j = 0; j < cols; ++j)
             {
                 linearizedDataset[i * cols + j] = listDataset[i][j];
             }
+        }
+
+        int *linearizedLabels = new int[rows];
+        for (int i = 0; i < rows; ++i)
+        {
             linearizedLabels[i] = listLabel[i][0];
         }
 
         KNN knn(5);
-
         knn.fit(linearizedDataset, linearizedLabels, rows, cols);
 
         int num_lines_test = readerDatasetNoLabel.getCurrentRows();
@@ -81,7 +84,6 @@ void Process(string datasetFileName, string labelFileName, string DatasetNoLabel
         // }
 
         cout << "KNN finalizado!" << endl;
-        // Liberar memória
         delete[] linearizedDataset;
         delete[] linearizedLabels;
         delete[] linearizedTest;

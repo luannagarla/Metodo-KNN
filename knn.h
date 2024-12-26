@@ -32,7 +32,7 @@ public:
         num_lines = n_lines;
         num_cols = n_cols;
 
-        // Copiar os dados para a matriz interna do KNN
+        // Copiar os dados do array linearizado para a matriz interna
         for (int i = 0; i < n_lines; ++i)
         {
             for (int j = 0; j < n_cols; ++j)
