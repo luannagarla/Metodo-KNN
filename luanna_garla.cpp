@@ -20,6 +20,7 @@ int main()
 
     return 0;
 }
+
 void Process(string datasetFileName, string labelFileName, string DatasetNoLabelFileName, char delimiter, bool ignoreFirstLine)
 {
     CSVReader readerDataset(datasetFileName, delimiter, ignoreFirstLine);
@@ -32,9 +33,10 @@ void Process(string datasetFileName, string labelFileName, string DatasetNoLabel
 
     if (fileDataset.is_open() && fileLabel.is_open() && fileDatasetNoLabel.is_open())
     {
-        cout << "---- Arquivos lidos com sucesso! ----" << endl << endl;
+        cout << "---- Arquivos lidos com sucesso! ----" << endl
+             << endl;
 
-        //leitura dos csv
+        // Leitura dos CSV
         void *dataset = readerDataset.readData(fileDataset);
         void *label = readerLabel.readData(fileLabel);
         void *test = readerDatasetNoLabel.readData(fileDatasetNoLabel);
@@ -42,11 +44,11 @@ void Process(string datasetFileName, string labelFileName, string DatasetNoLabel
         int rows = readerDataset.getCurrentRows();
         int cols = readerDataset.getCurrentCols();
 
-        //cast para uso do knn
+        // Cast para uso do KNN
         float **listDataset = reinterpret_cast<float **>(dataset);
-        float *listLabel = reinterpret_cast<float *>(label); 
+        float **listLabel = reinterpret_cast<float **>(label); // Alterado para float** para garantir consistência
 
-        // adiciona em nova estrutura 
+        // Adiciona em nova estrutura
         float **convertedDataSet = new float *[rows];
         for (int i = 0; i < rows; ++i)
         {
@@ -54,27 +56,25 @@ void Process(string datasetFileName, string labelFileName, string DatasetNoLabel
             for (int j = 0; j < cols; ++j)
             {
                 convertedDataSet[i][j] = listDataset[i][j];
-                cout << "Dado de treinamento[" << i << "][" << j << "] = "
-                     << convertedDataSet[i][j] << endl;
             }
         }
 
-        int *convertedLabels = new int[rows];  
+        float **convertedLabels = new float *[rows];
         for (int i = 0; i < rows; ++i)
         {
-            convertedLabels[i] = listLabel[i];  
-            cout << "Label convertido: " << convertedLabels[i] << endl;
+            convertedLabels[i] = new float[1];      
+            convertedLabels[i][0] = listLabel[i][0];
         }
 
-        //chamadas knn
+        // Chamada do KNN
         KNN knn(5);
-        knn.fit(convertedDataSet, convertedLabels, rows, cols); //fit
+        knn.fit(convertedDataSet, convertedLabels, rows, cols);
 
         int num_lines_test = readerDatasetNoLabel.getCurrentRows();
         int num_cols_test = readerDatasetNoLabel.getCurrentCols();
-        
+
         float **listTest = reinterpret_cast<float **>(test);
-        float **convertedTest = new float *[num_lines_test]; //conversão adequada do csv de teste
+        float **convertedTest = new float *[num_lines_test]; // Conversão adequada do CSV de teste
         for (int i = 0; i < num_lines_test; ++i)
         {
             convertedTest[i] = new float[num_cols_test];
@@ -86,8 +86,9 @@ void Process(string datasetFileName, string labelFileName, string DatasetNoLabel
             }
         }
 
-        //predições
-        cout << endl << "---------------RESULTADO-----------------" << endl;
+        // Previsões
+        cout << endl
+             << "---------------RESULTADO-----------------" << endl;
 
         int *predictions = knn.predict(convertedTest, num_lines_test);
 
@@ -96,7 +97,7 @@ void Process(string datasetFileName, string labelFileName, string DatasetNoLabel
             cout << "Classe prevista para o ponto de teste " << i + 1 << ": " << predictions[i] << endl;
         }
 
-        // destrutor
+        // Destrutor
         for (int i = 0; i < rows; ++i)
         {
             delete[] convertedDataSet[i];

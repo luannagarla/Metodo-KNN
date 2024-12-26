@@ -11,8 +11,8 @@ class KNN
 {
 private:
     int k;
-    float train_data[MAX_LINES][MAX_COLS]; 
-    int train_labels[MAX_LINES];           
+    float train_data[MAX_LINES][MAX_COLS];
+    float train_labels[MAX_LINES];
     int num_lines;
     int num_cols;
 
@@ -21,7 +21,7 @@ public:
 
     KNN(int k_value) : k(k_value), num_lines(0), num_cols(0) {}
 
-    void fit(float **data, int *labels, int n_lines, int n_cols)
+    void fit(float **data, float **labels, int n_lines, int n_cols)
     {
         if (!data || !labels)
         {
@@ -38,10 +38,11 @@ public:
             {
                 train_data[i][j] = data[i][j];
             }
-            train_labels[i] = labels[i];
+            train_labels[i] = labels[i][0]; 
         }
 
-        cout << "Dados carregados com sucesso no método fit!" << endl << endl;
+        cout << "Dados carregados com sucesso no método fit!" << endl
+             << endl;
 
         cout << "Dados de Treinamento:" << endl;
         for (int i = 0; i < num_lines; ++i)
@@ -58,7 +59,8 @@ public:
         {
             cout << train_labels[i] << " ";
         }
-        cout << endl << endl;
+        cout << endl
+             << endl;
     }
 
     int *predict(float **test_data, int num_lines_test)

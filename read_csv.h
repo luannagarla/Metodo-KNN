@@ -82,20 +82,23 @@ public:
         file.close();
         return createNewList(isFirstColumnInt, data);
     }
-
+    
+    //alterado para mlr funcionamento do knn
     void *createNewList(bool firstColumnInt, string data[100][100])
     {
         float **newData = new float *[currentRows];
-            for (int i = 0; i < currentRows; ++i)
-            {
-                newData[i] = new float[currentCols];
-                for (int j = 0; j < currentCols; ++j)
-                {
-                    newData[i][j] = stringToFloat(data[i][j]);
-                }
-            }
 
-            return (void *)newData;
+        for (int i = 0; i < currentRows; ++i)
+        {
+            newData[i] = new float[currentCols];
+
+            for (int j = 0; j < currentCols; ++j)
+            {
+                newData[i][j] = stringToFloat(data[i][j]);
+            }
+        }
+
+        return (void *)newData;
     }
 
     int stringToInt(const string &str)
