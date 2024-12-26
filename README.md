@@ -2,17 +2,20 @@
 
 **Objetivo:** Implementação em c++ de uma classe que cálcule o KNN 
 
-**Etapas:**
-**1 - Classe para k-NN:** 
-A classe modelará o método de aprendizado k-NN (k-Nearest Neighbors).
-Permitirá execução com dados do tipo int ou float (apenas um tipo por execução).
+**Teste do código:**
+Para testar o código, basta apenas rodá-lo passando corretamente as referências (nome do local do arquivo) dos csv nas váriaveis <br>
 
-**Construtor:**
-Padrão: Não recebe parâmetros e define k = 5.
-Parametrizado: Recebe um valor inteiro como argumento para definir o valor de k.
+string fileTraining = "dataset-training.csv";
+string labelTraining = "label-training.csv";
+string fileNoLabel = "dataset-no-label.csv";
 
-**Funcionalidades principais:**
-Validação do tipo de dado do conjunto (int ou float).
+No meu código, esses arquivos estavam dentro de uma pasta "Output" no mesmo local que os códigos .cpp e .h
 
-**Métodos para:**
-Contendo um método fit (de treinamento dos dados) e outro predict (função de classificação)
+**Sobre o código**
+- Existe três arquivos para a execução do código
+    - read_csv.h: responsável por salvar dados de arquivos csv em arrays
+    - knn.h: responsável pelo cálculo do KNN 
+    - luanna_garla.cpp: lê arquivos csv, salva-os utilizando o read_csv.h e cálcula o knn utilizando o knn.h
+- Diversas conversões tiveram que ser feitas no luanna_garla.cpp para que os ponteiros salvos em read_csv.h fossem devidamente convertidos em arrays de float para utilização no knn.h
+- Não foi definidio um critério de desempate do knn
+

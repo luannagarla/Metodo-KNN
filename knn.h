@@ -114,7 +114,7 @@ public:
                 }
             }
 
-            //desempate por maioria ou pega a primeira ocorrência
+            //desempate por maioria ou pega a primeira ocorrência da lista votes[]
             int votes[MAX_LINES] = {0};
             for (int i = 0; i < k; ++i)
             {
@@ -134,7 +134,6 @@ public:
                 }
             }
 
-            //predição salva
             predictions[t] = predicted_class;
         }
 
