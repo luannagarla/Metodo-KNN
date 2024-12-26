@@ -6,7 +6,9 @@
 Para testar o código, basta apenas rodá-lo passando corretamente as referências (nome do local do arquivo) dos csv nas váriaveis <br>
 
 string fileTraining = "dataset-training.csv"; <br>
+
 string labelTraining = "label-training.csv"; <br>
+
 string fileNoLabel = "dataset-no-label.csv"; <br>
 
 <br> No meu código, esses arquivos estavam dentro de uma pasta "Output" no mesmo local que os códigos .cpp e .h
