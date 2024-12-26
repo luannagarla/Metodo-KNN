@@ -11,8 +11,8 @@ class KNN
 {
 private:
     int k;
-    float train_data[MAX_LINES][MAX_COLS]; // Dados de treinamento (matriz bidimensional)
-    int train_labels[MAX_LINES];           // Rótulos de treinamento (vetor unidimensional)
+    float train_data[MAX_LINES][MAX_COLS]; 
+    int train_labels[MAX_LINES];           
     int num_lines;
     int num_cols;
 
@@ -32,7 +32,6 @@ public:
         num_lines = n_lines;
         num_cols = n_cols;
 
-        // Copiando os dados e os rótulos para as variáveis internas
         for (int i = 0; i < num_lines; ++i)
         {
             for (int j = 0; j < num_cols; ++j)
@@ -42,10 +41,9 @@ public:
             train_labels[i] = labels[i];
         }
 
-        cout << "Dados carregados com sucesso no método fit!" << endl;
+        cout << "Dados carregados com sucesso no método fit!" << endl << endl;
 
-        // Printando os dados de treinamento (train_data)
-        cout << "Dados de Treinamento (train_data):" << endl;
+        cout << "Dados de Treinamento:" << endl;
         for (int i = 0; i < num_lines; ++i)
         {
             for (int j = 0; j < num_cols; ++j)
@@ -55,13 +53,12 @@ public:
             cout << endl;
         }
 
-        // Printando os rótulos de treinamento (train_labels)
-        cout << "Rótulos de Treinamento (train_labels):" << endl;
+        cout << "Labels de Treinamento:" << endl;
         for (int i = 0; i < num_lines; ++i)
         {
             cout << train_labels[i] << " ";
         }
-        cout << endl;
+        cout << endl << endl;
     }
 
     int *predict(float **test_data, int num_lines_test)
@@ -78,7 +75,6 @@ public:
         {
             float test_point[MAX_COLS];
 
-            // Copiando o ponto de teste para o vetor local
             for (int i = 0; i < num_cols; ++i)
             {
                 test_point[i] = test_data[t][i];
@@ -113,7 +109,6 @@ public:
                 }
             }
 
-            // Desempate baseado nos votos dos vizinhos
             int votes[MAX_LINES] = {0};
             for (int i = 0; i < k; ++i)
             {

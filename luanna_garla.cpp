@@ -87,7 +87,7 @@ void Process(string datasetFileName, string labelFileName, string DatasetNoLabel
         }
 
         //predições
-        cout << "---------------RESULTADO-----------------" << endl;
+        cout << endl << "---------------RESULTADO-----------------" << endl;
 
         int *predictions = knn.predict(convertedTest, num_lines_test);
 
